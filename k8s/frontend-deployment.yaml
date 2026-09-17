@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: your-dockerhub-username/sakamchisto-frontend:latest
+          image: davidgjorgiev/sakamchisto-frontend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

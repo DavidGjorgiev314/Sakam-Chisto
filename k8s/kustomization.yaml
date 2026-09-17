@@ -19,7 +19,7 @@ resources:
   - ingress.yaml
 
 images:
-  - name: your-dockerhub-username/sakamchisto-backend
+  - name: davidgjorgiev/sakamchisto-backend
     newTag: latest
-  - name: your-dockerhub-username/sakamchisto-frontend
+  - name: davidgjorgiev/sakamchisto-frontend
     newTag: latest

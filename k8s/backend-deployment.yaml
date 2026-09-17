@@ -33,7 +33,7 @@ spec:
             - until pg_isready -h postgres -p 5432; do sleep 2; done
       containers:
         - name: backend
-          image: your-dockerhub-username/sakamchisto-backend:latest
+          image: davidgjorgiev/sakamchisto-backend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
