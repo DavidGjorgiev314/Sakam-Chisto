@@ -1,8 +1,14 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {logout} from "../utils/auth.js";
 
 export default function Header() {
-    const token = localStorage.getItem("token");
+    const location = useLocation();
+    const [token, setToken] = useState(() => localStorage.getItem("token"));
+
+    useEffect(() => {
+        setToken(localStorage.getItem("token"));
+    }, [location]);
 
     const handleLogout = () => {
         logout();
@@ -15,7 +21,7 @@ export default function Header() {
                 {token ? (
                     <>
                         <Link to="/cleaners">Home</Link>
-                        <button onClick={handleLogout} className="bg-red-600 px-3 py-1 rounded">
+                        <button onClick={handleLogout} className="bg-red-600 text-white px-3 py-1 rounded">
                             Logout
                         </button>
                     </>
