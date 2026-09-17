@@ -1,0 +1,62 @@
+name: sakamchisto
+
+services:
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sakamchisto}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-sakamchisto}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - sakamchisto
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    image: ${DOCKERHUB_USERNAME:-sakamchisto}/sakamchisto-backend:${IMAGE_TAG:-latest}
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/${POSTGRES_DB:-sakamchisto}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env (min 32 characters)}
+      UPLOADS_DIR: /app/uploads
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:8080}
+      JPA_SHOW_SQL: "false"
+    volumes:
+      - uploads-data:/app/uploads
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - sakamchisto
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    image: ${DOCKERHUB_USERNAME:-sakamchisto}/sakamchisto-frontend:${IMAGE_TAG:-latest}
+    ports:
+      - "${APP_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - sakamchisto
+    restart: unless-stopped
+
+volumes:
+  database-data:
+  uploads-data:
+
+networks:
+  sakamchisto:
+    driver: bridge
