@@ -96,9 +96,6 @@ jobs:
       - name: Render kustomization
         run: kubectl kustomize k8s > /dev/null
 
-      - name: Validate server-side
-        run: kubectl kustomize k8s | kubectl apply --dry-run=server -f - || true
-
   publish:
     name: Build and push images
     runs-on: ubuntu-latest
