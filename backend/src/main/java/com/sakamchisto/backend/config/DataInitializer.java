@@ -20,7 +20,7 @@ public class DataInitializer {
                 admin.setRole("ADMIN"); // Adjust based on your model
                 userRepository.save(admin);
 
-                System.out.println("Default admin user created: admin / admin123");
+                System.out.println("Default admin user created");
             }
         };
     }

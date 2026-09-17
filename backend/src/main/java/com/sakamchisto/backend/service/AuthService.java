@@ -36,10 +36,6 @@ public class AuthService {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password"));
 
-        System.out.println("Raw password: " + request.getPassword());
-        System.out.println("Stored password: " + user.getPassword());
-        System.out.println("Password matches: " + passwordEncoder.matches(request.getPassword(), user.getPassword()));
-
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("Invalid username or password");
         }
