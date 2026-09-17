@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sakamchisto
+  namespace: sakamchisto
+  labels:
+    app.kubernetes.io/name: sakamchisto
+    app.kubernetes.io/part-of: sakamchisto
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: sakamchisto.local
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  name: http
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  name: http

@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-headless
+  namespace: sakamchisto
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: sakamchisto
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: sakamchisto
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: sakamchisto
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: postgres
