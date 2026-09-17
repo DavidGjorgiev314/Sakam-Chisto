@@ -1,0 +1,9 @@
+target
+uploads
+.idea
+*.iml
+.git
+.gitignore
+Dockerfile
+.dockerignore
+HELP.md
