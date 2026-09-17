@@ -4,6 +4,7 @@ import com.sakamchisto.backend.exception.CleanerNotFoundException;
 import com.sakamchisto.backend.model.Cleaner;
 import com.sakamchisto.backend.repository.CleanerRepository;
 import com.sakamchisto.backend.service.CleanerService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +18,9 @@ import java.util.List;
 @Service
 public class CleanerServiceImpl implements CleanerService {
     private final CleanerRepository cleanerRepository;
+
+    @Value("${app.uploads.dir:uploads}")
+    private String uploadsDir;
 
     public CleanerServiceImpl(CleanerRepository cleanerRepository) {
         this.cleanerRepository = cleanerRepository;
@@ -58,8 +62,7 @@ public class CleanerServiceImpl implements CleanerService {
     public Cleaner uploadPhoto(Long id, MultipartFile file) throws IOException {
         System.out.println("Received file: " + file.getOriginalFilename());
         Cleaner cleaner = this.findById(id);
-        // Create uploads folder at project root if missing
-        Path uploadDir = Paths.get("uploads");
+        Path uploadDir = Paths.get(uploadsDir);
         System.out.println("Uploads directory resolved to: " + uploadDir.toAbsolutePath());
         if (!Files.exists(uploadDir)) {
             Files.createDirectories(uploadDir);
