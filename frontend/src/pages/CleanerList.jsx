@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import jwtDecode from "jwt-decode";  // Changed this line
+import jwtDecode from "jwt-decode";
+import { API_BASE } from "../lib/apiBase";
 
 export default function CleanerList() {
     const [cleaners, setCleaners] = useState([]);
@@ -22,7 +23,7 @@ export default function CleanerList() {
     };
 
     useEffect(() => {
-        fetch("http://localhost:8080/cleaners")
+        fetch(`${API_BASE}/cleaners`)
             .then((res) => {
                 if (!res.ok) throw new Error("Failed to fetch cleaners");
                 return res.json();
@@ -42,7 +43,7 @@ export default function CleanerList() {
         const token = localStorage.getItem("token");
 
         try {
-            const response = await fetch(`http://localhost:8080/cleaners/delete/${id}`, {
+            const response = await fetch(`${API_BASE}/cleaners/delete/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -86,7 +87,7 @@ export default function CleanerList() {
                                 className="bg-white rounded-lg shadow flex flex-col items-center text-center p-4 cursor-pointer hover:scale-105 transition-transform"
                             >
                                 <img
-                                    src={c.imageUrl ? `http://localhost:8080${c.imageUrl}?v=${c.id}` : defaultImage}
+                                    src={c.imageUrl ? `${API_BASE}${c.imageUrl}?v=${c.id}` : defaultImage}
                                     alt={`${c.name} ${c.surname}`}
                                     className="w-20 h-20 object-cover rounded-full mb-2"
                                     onError={(e) => {
@@ -141,7 +142,7 @@ export default function CleanerList() {
                             <img
                                 src={
                                     selectedCleaner.imageUrl
-                                        ? `http://localhost:8080${selectedCleaner.imageUrl}?v=${selectedCleaner.id}`
+                                        ? `${API_BASE}${selectedCleaner.imageUrl}?v=${selectedCleaner.id}`
                                         : defaultImage
                                 }
                                 alt={`${selectedCleaner.name} ${selectedCleaner.surname}`}

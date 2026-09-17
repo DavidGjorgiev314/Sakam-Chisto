@@ -1,6 +1,7 @@
 import CleanerForm from "../components/CleanerForm";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { API_BASE } from "../lib/apiBase";
 
 export default function EditCleaner() {
     const { id } = useParams();
@@ -12,7 +13,7 @@ export default function EditCleaner() {
     useEffect(() => {
         const token = localStorage.getItem("token");
 
-        fetch(`http://localhost:8080/cleaners/${id}`, {
+        fetch(`${API_BASE}/cleaners/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -38,7 +39,7 @@ export default function EditCleaner() {
         params.append("surname", updatedCleaner.surname);
         params.append("pricePerHour", updatedCleaner.pricePerHour);
 
-        const response = await fetch(`http://localhost:8080/cleaners/update/${id}`, {
+        const response = await fetch(`${API_BASE}/cleaners/update/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -52,7 +53,7 @@ export default function EditCleaner() {
                 const formData = new FormData();
                 formData.append("file", photoFile);
 
-                await fetch(`http://localhost:8080/cleaners/${id}/upload-photo`, {
+                await fetch(`${API_BASE}/cleaners/${id}/upload-photo`, {
                     method: "POST",
                     headers: {
                         Authorization: `Bearer ${token}`,

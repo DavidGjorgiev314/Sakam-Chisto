@@ -1,6 +1,7 @@
 import CleanerForm from "../components/CleanerForm";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { API_BASE } from "../lib/apiBase";
 
 export default function AddCleaner() {
     const navigate = useNavigate();
@@ -10,7 +11,7 @@ export default function AddCleaner() {
     const handleAdd = async (cleaner) => {
         const token = localStorage.getItem("token");  // Get the token
 
-        const response = await fetch("http://localhost:8080/cleaners", {
+        const response = await fetch(`${API_BASE}/cleaners`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -27,7 +28,7 @@ export default function AddCleaner() {
                 const formData = new FormData();
                 formData.append("file", photoFile);
 
-                const uploadResponse = await fetch(`http://localhost:8080/cleaners/${createdCleaner.id}/upload-photo`, {
+                const uploadResponse = await fetch(`${API_BASE}/cleaners/${createdCleaner.id}/upload-photo`, {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${token}`  // Add authorization

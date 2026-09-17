@@ -1,9 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {logout} from "../utils/auth.js";
 
 export default function Header() {
     const token = localStorage.getItem("token");
-    const navigate = useNavigate();
 
     const handleLogout = () => {
         logout();
