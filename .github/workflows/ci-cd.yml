@@ -159,7 +159,7 @@ jobs:
 
   deploy:
     name: Deploy to Kubernetes
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.DEPLOY_RUNNER || 'ubuntu-latest' }}
     needs: publish
     if: github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
     environment: production
@@ -167,26 +167,31 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Configure kubeconfig
+        shell: bash
         run: |
-          mkdir -p "$HOME/.kube"
-          printf '%s' "${{ secrets.KUBE_CONFIG }}" | base64 -d > "$HOME/.kube/config"
-          chmod 600 "$HOME/.kube/config"
+          mkdir -p "$RUNNER_TEMP/kube"
+          printf '%s' "${{ secrets.KUBE_CONFIG }}" | base64 -d > "$RUNNER_TEMP/kube/config"
+          echo "KUBECONFIG=$RUNNER_TEMP/kube/config" >> "$GITHUB_ENV"
 
       - name: Apply manifests
+        shell: bash
         run: |
           kubectl apply -f k8s/namespace.yaml
           kubectl apply -k k8s
 
       - name: Roll out new image versions
+        shell: bash
         run: |
           kubectl -n sakamchisto set image deployment/backend backend=${{ env.BACKEND_IMAGE }}:sha-${{ github.sha }}
           kubectl -n sakamchisto set image deployment/frontend frontend=${{ env.FRONTEND_IMAGE }}:sha-${{ github.sha }}
 
       - name: Wait for rollout
+        shell: bash
         run: |
           kubectl -n sakamchisto rollout status deployment/backend --timeout=300s
           kubectl -n sakamchisto rollout status deployment/frontend --timeout=300s
 
       - name: Report cluster state
         if: always()
+        shell: bash
         run: kubectl -n sakamchisto get pods,svc,ingress
