@@ -14,7 +14,6 @@ This repository contains the full containerisation, orchestration and delivery s
 | CI/CD pipeline | `.github/workflows/ci-cd.yml` |
 | Kubernetes manifests | `k8s/` |
 | Local deploy helper | `scripts/deploy-local.ps1` |
-| Project report | `docs/REPORT.md` |
 
 ## Architecture
 
