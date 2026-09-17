@@ -1,0 +1,40 @@
+# ---- IDE / editor ----
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.suo
+
+# ---- Operating system ----
+.DS_Store
+Thumbs.db
+
+# ---- Node / frontend ----
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---- Java / Maven ----
+target/
+*.class
+!.mvn/wrapper/maven-wrapper.properties
+
+# ---- Runtime data (never commit user uploads or DB files) ----
+uploads/
+!uploads/.gitkeep
+pgdata/
+
+# ---- Secrets and environment overrides ----
+.env
+.env.local
+.env.*.local
+!.env.example
+kubeconfig
+*.pem
+
+# ---- Tooling ----
