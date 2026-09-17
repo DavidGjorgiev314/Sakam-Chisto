@@ -10,7 +10,7 @@ param(
     [switch]$SkipImport
 )
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 Push-Location $repoRoot
@@ -20,39 +20,39 @@ try {
     $frontendImage = "${DockerHubUser}/sakamchisto-frontend:${Tag}"
 
     if (-not $SkipBuild) {
-        Write-Host "Building backend image $backendImage"
+        Write-Host "==> Building backend image $backendImage"
         docker build -t $backendImage ./backend
-        if (-not $?) { throw "backend image build failed" }
+        if ($LASTEXITCODE -ne 0) { throw "backend image build failed (exit $LASTEXITCODE)" }
 
-        Write-Host "Building frontend image $frontendImage"
+        Write-Host "==> Building frontend image $frontendImage"
         docker build -t $frontendImage ./frontend
-        if (-not $?) { throw "frontend image build failed" }
+        if ($LASTEXITCODE -ne 0) { throw "frontend image build failed (exit $LASTEXITCODE)" }
     }
 
     if (-not $SkipImport) {
-        Write-Host "Importing images into k3d cluster $ClusterName"
+        Write-Host "==> Importing images into k3d cluster $ClusterName"
         k3d image import $backendImage -c $ClusterName
-        if (-not $?) { throw "backend image import failed" }
+        if ($LASTEXITCODE -ne 0) { throw "backend image import failed (exit $LASTEXITCODE)" }
 
         k3d image import $frontendImage -c $ClusterName
-        if (-not $?) { throw "frontend image import failed" }
+        if ($LASTEXITCODE -ne 0) { throw "frontend image import failed (exit $LASTEXITCODE)" }
     }
 
-    Write-Host "Applying manifests"
+    Write-Host "==> Applying manifests"
     kubectl apply -f k8s/namespace.yaml
-    if (-not $?) { throw "namespace apply failed" }
+    if ($LASTEXITCODE -ne 0) { throw "namespace apply failed (exit $LASTEXITCODE)" }
 
     kubectl apply -k k8s
-    if (-not $?) { throw "kustomize apply failed" }
+    if ($LASTEXITCODE -ne 0) { throw "kustomize apply failed (exit $LASTEXITCODE)" }
 
-    Write-Host "Pointing deployments at $Tag"
+    Write-Host "==> Pointing deployments at tag $Tag"
     kubectl -n $Namespace set image "deployment/backend" "backend=$backendImage"
-    if (-not $?) { throw "backend image update failed" }
+    if ($LASTEXITCODE -ne 0) { throw "backend image update failed (exit $LASTEXITCODE)" }
 
     kubectl -n $Namespace set image "deployment/frontend" "frontend=$frontendImage"
-    if (-not $?) { throw "frontend image update failed" }
+    if ($LASTEXITCODE -ne 0) { throw "frontend image update failed (exit $LASTEXITCODE)" }
 
-    Write-Host "Waiting for rollout"
+    Write-Host "==> Waiting for rollout"
     kubectl -n $Namespace rollout status statefulset/postgres --timeout=300s
     kubectl -n $Namespace rollout status deployment/backend --timeout=300s
     kubectl -n $Namespace rollout status deployment/frontend --timeout=300s
